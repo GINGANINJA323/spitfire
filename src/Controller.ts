@@ -22,6 +22,9 @@ export class InputController {
             },
             right: {
                 pressed: false
+            },
+            space: {
+                pressed: false
             }
         }
 

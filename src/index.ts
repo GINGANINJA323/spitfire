@@ -3,6 +3,8 @@ import { InputController } from "./Controller";
 
 const app = new Application();
 const inputController = new InputController();
+ // @ts-ignore
+const bullets = []; // Var to store the bullets in the field
 
 // Setup - init the app and attach to the body
 const setup = async() => {
@@ -30,6 +32,28 @@ const preload = async() => {
     await Assets.load(assets);
 }
 
+const addBullet = (x: number, y: number, rot: number) => {
+    const bullet = Sprite.from('bullet');
+
+    bullet.anchor.set(0.5);
+    bullet.scale = 0.2;
+
+    bullet.x = x;
+    bullet.y = y;
+    bullet.rotation = rot;
+
+    bullets.push(bullet);
+    app.stage.addChild(bullet);
+}
+
+const animateBullets = () => {
+    // @ts-ignore
+    bullets.forEach((bullet) => {
+        bullet.x += Math.sin(bullet.rotation) * 4
+        bullet.y -= Math.cos(bullet.rotation) * 4
+    });
+}
+
 // Game's main loop, where everything comes together
 (async() => {
     await setup();
@@ -44,7 +68,6 @@ const preload = async() => {
 
     const playerSpeed = 2;
     const playerTurnSpeed = 0.05;
-    
 
     app.stage.addChild(player);
 
@@ -55,10 +78,15 @@ const preload = async() => {
         player.x += Math.sin(player.rotation) * playerSpeed;
         player.y -= Math.cos(player.rotation) * playerSpeed;
 
+        animateBullets();
+
+        // Rotate when the player presses A/D or < >
         if (inputController.keys['left'].pressed) {
             player.rotation -= playerTurnSpeed;
         } if (inputController.keys['right'].pressed) {
             player.rotation += playerTurnSpeed;
+        } if (inputController.keys['space'].pressed) {
+            addBullet(player.x, player.y, player.rotation);
         }
     })
 })();
