@@ -3,10 +3,8 @@ import { InputController } from "./Controller";
 
 const app = new Application();
 const inputController = new InputController();
- // @ts-ignore
-const bullets = []; // Var to store the bullets in the field
-// @ts-ignore
-const enemies = []; // Store the enemies in the field
+const bullets: Sprite[] = []; // Var to store the bullets in the field
+const enemies: Sprite[] = []; // Store the enemies in the field
 
 // Setup - init the app and attach to the body
 const setup = async() => {
@@ -49,13 +47,15 @@ const addBullet = (x: number, y: number, rot: number) => {
 }
 
 const animateBullets = () => {
-    // @ts-ignore
+
     bullets.forEach((bullet) => {
         bullet.x += Math.sin(bullet.rotation) * 4
         bullet.y -= Math.cos(bullet.rotation) * 4
 
-        if (bullet.x > app.screen.width || bullet.y > app.screen.height) {
-            console.log('Out!')
+        if (bullet.x < app.screen.width || bullet.y < app.screen.height) {
+            enemies.forEach((enemy) => {
+                if (testForCollision(bullet, enemy)) console.log('Shot down!');
+            });
         }
     });
 }
@@ -64,7 +64,7 @@ const animateEnemies = () => {
     const stageBoundary = 100;
     const boundWidth = app.screen.width + stageBoundary * 2;
     const boundHeight = app.screen.height + stageBoundary * 2;
-    // @ts-ignore
+
     enemies.forEach((enemy) => {
         enemy.x += Math.sin(enemy.rotation) * 2
         enemy.y -= Math.cos(enemy.rotation) * 2
@@ -82,6 +82,19 @@ const animateEnemies = () => {
     });
 }
 
+// AABB collision detection
+const testForCollision = (obj1: Sprite, obj2: Sprite) => {
+    const bounds1 = obj1.getBounds();
+    const bounds2 = obj2.getBounds();
+
+    return (
+        bounds1.x < bounds2.x + bounds2.width &&
+        bounds1.x + bounds1.width > bounds2.x &&
+        bounds1.y > bounds2.y + bounds2.height &&
+        bounds1.y + bounds1.height > bounds2.y
+    )
+}
+
 const addEnemies = (playerX: number, playerY: number) => {
     const enemyCount = 5;
 
@@ -92,6 +105,7 @@ const addEnemies = (playerX: number, playerY: number) => {
         enemy.x = Math.random() * app.screen.width;
         enemy.y = Math.random() * app.screen.height;
         enemy.rotation = Math.random();
+        enemy.scale = 1.5;
 
         setInterval(() => enemy.rotation = Math.random(), Math.random() * 1000);
 
@@ -111,6 +125,7 @@ const addEnemies = (playerX: number, playerY: number) => {
     player.x = app.screen.width / 2;
     player.y = app.screen.height / 2;
     player.rotation = 0;
+    player.scale = 1.5;
 
     const playerSpeed = 2;
     const playerTurnSpeed = 0.05;
@@ -136,6 +151,12 @@ const addEnemies = (playerX: number, playerY: number) => {
         } if (inputController.keys['space'].pressed) {
             addBullet(player.x, player.y, player.rotation);
         }
+
+        enemies.forEach((enemy) => {
+            if (testForCollision(player, enemy)) {
+                console.log('Player down!');
+            }
+        })
 
         animateBullets();
         animateEnemies();
