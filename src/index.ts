@@ -5,6 +5,8 @@ const app = new Application();
 const inputController = new InputController();
  // @ts-ignore
 const bullets = []; // Var to store the bullets in the field
+// @ts-ignore
+const enemies = []; // Store the enemies in the field
 
 // Setup - init the app and attach to the body
 const setup = async() => {
@@ -36,7 +38,7 @@ const addBullet = (x: number, y: number, rot: number) => {
     const bullet = Sprite.from('bullet');
 
     bullet.anchor.set(0.5);
-    bullet.scale = 0.2;
+    bullet.scale = 0.1;
 
     bullet.x = x;
     bullet.y = y;
@@ -51,7 +53,51 @@ const animateBullets = () => {
     bullets.forEach((bullet) => {
         bullet.x += Math.sin(bullet.rotation) * 4
         bullet.y -= Math.cos(bullet.rotation) * 4
+
+        if (bullet.x > app.screen.width || bullet.y > app.screen.height) {
+            console.log('Out!')
+        }
     });
+}
+
+const animateEnemies = () => {
+    const stageBoundary = 100;
+    const boundWidth = app.screen.width + stageBoundary * 2;
+    const boundHeight = app.screen.height + stageBoundary * 2;
+    // @ts-ignore
+    enemies.forEach((enemy) => {
+        enemy.x += Math.sin(enemy.rotation) * 2
+        enemy.y -= Math.cos(enemy.rotation) * 2
+
+        // Enemies wrap around if they go out of bounds, keeps them in the field until shot
+        if (enemy.x < -stageBoundary) {
+            enemy.x += boundWidth;
+        } if (enemy.x > app.screen.width + stageBoundary) {
+            enemy.x -= boundWidth;
+        } if (enemy.y < -stageBoundary) {
+            enemy.y += boundHeight;
+        } if (enemy.y > app.screen.height + stageBoundary) {
+            enemy.y -= boundHeight;
+        }
+    });
+}
+
+const addEnemies = (playerX: number, playerY: number) => {
+    const enemyCount = 5;
+
+    for (let i = 0; i < enemyCount; i++) {
+        const enemy = Sprite.from('bf109');
+
+        enemy.anchor.set(0.5);
+        enemy.x = Math.random() * app.screen.width;
+        enemy.y = Math.random() * app.screen.height;
+        enemy.rotation = Math.random();
+
+        setInterval(() => enemy.rotation = Math.random(), Math.random() * 1000);
+
+        enemies.push(enemy);
+        app.stage.addChild(enemy);
+    }
 }
 
 // Game's main loop, where everything comes together
@@ -73,13 +119,15 @@ const animateBullets = () => {
 
     app.ticker.maxFPS = 60;
 
+
+    addEnemies(player.x, player.y);
+
     app.ticker.add((time) => {
         // Move the player constantly in the direction they're facing
         player.x += Math.sin(player.rotation) * playerSpeed;
         player.y -= Math.cos(player.rotation) * playerSpeed;
 
-        animateBullets();
-
+        
         // Rotate when the player presses A/D or < >
         if (inputController.keys['left'].pressed) {
             player.rotation -= playerTurnSpeed;
@@ -88,5 +136,8 @@ const animateBullets = () => {
         } if (inputController.keys['space'].pressed) {
             addBullet(player.x, player.y, player.rotation);
         }
+
+        animateBullets();
+        animateEnemies();
     })
 })();
