@@ -1,6 +1,8 @@
 import { Application, Assets, Sprite } from "pixi.js";
+import { InputController } from "./Controller";
 
 const app = new Application();
+const inputController = new InputController();
 
 // Setup - init the app and attach to the body
 const setup = async() => {
@@ -38,6 +40,25 @@ const preload = async() => {
     player.anchor.set(0.5);
     player.x = app.screen.width / 2;
     player.y = app.screen.height / 2;
+    player.rotation = 0;
+
+    const playerSpeed = 2;
+    const playerTurnSpeed = 0.05;
+    
 
     app.stage.addChild(player);
+
+    app.ticker.maxFPS = 60;
+
+    app.ticker.add((time) => {
+        // Move the player constantly in the direction they're facing
+        player.x += Math.sin(player.rotation) * playerSpeed;
+        player.y -= Math.cos(player.rotation) * playerSpeed;
+
+        if (inputController.keys['left'].pressed) {
+            player.rotation -= playerTurnSpeed;
+        } if (inputController.keys['right'].pressed) {
+            player.rotation += playerTurnSpeed;
+        }
+    })
 })();
