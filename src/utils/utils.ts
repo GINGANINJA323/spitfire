@@ -11,3 +11,9 @@ export const testForCollision = (obj1: Sprite, obj2: Sprite) => {
         bounds1.y + bounds1.height > bounds2.y
     )
 }
+
+export const getBoundedRandomValue = (min: number, max: number) => {
+    const minCeiled = Math.ceil(min);
+    const maxFloored = Math.floor(max);
+    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled); // The maximum is exclusive and the minimum is inclusive
+}

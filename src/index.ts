@@ -3,6 +3,7 @@ import { InputController } from "./utils/InputController";
 import { addEnemies, animateEnemies } from "./enemy";
 import { addBullet, animateBullets } from "./bullet";
 import { addPlayer, animatePlayer } from "./player";
+import { addPickup, animatePickup } from "./pickup";
 
 const app = new Application();
 const inputController = new InputController();
@@ -29,6 +30,10 @@ const preload = async() => {
         {
             alias: 'bullet',
             src: 'assets/bullet.png'
+        },
+        {
+            alias: 'pickup',
+            src: 'assets/pickup.png'
         }
     ];
 
@@ -44,9 +49,12 @@ const preload = async() => {
     addPlayer(app);
     addEnemies(app, enemies);
 
+    setInterval(() => addPickup(app), 10000);
+
     app.ticker.add((time) => {
         animatePlayer(app, inputController, bullets, enemies);
         animateBullets(app, bullets, enemies);
         animateEnemies(app, enemies);
+        animatePickup(app);
     })
 })();

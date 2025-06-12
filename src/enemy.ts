@@ -1,7 +1,7 @@
 import { Application, Sprite } from "pixi.js";
+import { stageBoundary } from "./utils/constants";
 
 export const animateEnemies = (app: Application, enemies: Sprite[]) => {
-    const stageBoundary = 100;
     const boundWidth = app.screen.width + stageBoundary * 2;
     const boundHeight = app.screen.height + stageBoundary * 2;
 

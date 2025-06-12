@@ -5,7 +5,7 @@ import { addBullet } from "./bullet";
 
 const playerSpeed = 2;
 const playerTurnSpeed = 0.05;
-let player: Sprite;
+export let player: Sprite;
 
 export const addPlayer = (app: Application) => {
     player = Sprite.from('spitfire');
