@@ -34,6 +34,10 @@ const preload = async() => {
         {
             alias: 'pickup',
             src: 'assets/pickup.png'
+        },
+        {
+            alias: 'explosion',
+            src: 'assets/bang.png'
         }
     ];
 
