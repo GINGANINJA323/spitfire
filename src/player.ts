@@ -3,7 +3,7 @@ import { InputController } from "./utils/InputController";
 import { testForCollision } from "./utils/utils";
 import { addBullet } from "./bullet";
 
-const playerSpeed = 2;
+let playerSpeed = 2;
 const playerTurnSpeed = 0.05;
 export let player: Sprite;
 
@@ -31,6 +31,10 @@ export const animatePlayer = (app: Application, controller: InputController, bul
         player.rotation += playerTurnSpeed;
     } if (controller.keys['space'].pressed) {
         addBullet(app, bullets, player.x, player.y, player.rotation);
+    } if (controller.keys['boost'].pressed) {
+        playerSpeed = 3;
+    } else {
+        playerSpeed = 2;
     }
 
     enemies.forEach((enemy) => {

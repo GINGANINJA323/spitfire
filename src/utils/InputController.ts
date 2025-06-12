@@ -3,7 +3,9 @@ const keyMap: { [key: string]: string } = {
     KeyA: 'left',
     ArrowLeft: 'left',
     KeyD: 'right',
-    ArrowRight: 'right'
+    ArrowRight: 'right',
+    ShiftLeft: 'boost',
+    ShiftRight: 'boost'
 }
 
 interface Keys {
@@ -24,6 +26,9 @@ export class InputController {
                 pressed: false
             },
             space: {
+                pressed: false
+            },
+            boost: {
                 pressed: false
             }
         }
